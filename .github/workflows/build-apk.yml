@@ -1,3 +1,4 @@
+
 name: Build APK
 
 on:
@@ -8,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: duma_android
     steps:
       - uses: actions/checkout@v4
 
@@ -24,7 +28,7 @@ jobs:
         run: |
           mkdir -p app/src/main/assets/www/fonts
           cd app/src/main/assets/www/fonts
-          bash "$GITHUB_WORKSPACE/tools/get-fonts.sh"
+          bash "$GITHUB_WORKSPACE/duma_android/tools/get-fonts.sh"
 
       # Для магазинной сборки убираем блок с Telegram-ссылкой (см. docs/PUBLISHING_CHECKLIST.md).
       # Хотите оставить: удалите этот шаг целиком.
@@ -57,5 +61,5 @@ jobs:
         with:
           name: duma-android
           path: |
-            app/build/outputs/apk/release/*.apk
-            app/build/outputs/bundle/release/*.aab
+            duma_android/app/build/outputs/apk/release/*.apk
+            duma_android/app/build/outputs/bundle/release/*.aab
