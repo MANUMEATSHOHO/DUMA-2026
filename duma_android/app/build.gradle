@@ -1,0 +1,55 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Подпись релиза берётся из переменных окружения (их задаёт GitHub Actions).
+// Если их нет, APK подписывается debug-ключом: ставится на телефон, но для магазинов не годится.
+def ksFile = System.getenv('KEYSTORE_FILE')
+
+android {
+    namespace 'com.manumgames.duma'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.manumgames.duma'
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    signingConfigs {
+        release {
+            if (ksFile) {
+                storeFile file(ksFile)
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig ksFile ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+    }
+
+    androidResources {
+        noCompress 'woff2'
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.12.1'
+}
